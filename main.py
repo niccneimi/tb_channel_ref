@@ -13,7 +13,7 @@ from db import Database
 
 bot = Bot(TOKEN)
 dp = Dispatcher()
-db = Database(r'domophone.db')
+db = Database('/data/domophone.db')
 #####################################################################
 
 ##############################COMANDS################################
@@ -122,7 +122,7 @@ async def echo(message: Message, state: FSMContext):
             if not db.get_try_free(message.from_user.id):
                 expire_date = datetime.now() + timedelta(days=1000)
                 link = await bot.create_chat_invite_link(channel_id, expire_date=expire_date)
-                await message.answer(f"Ваша ссылка:\n<code>{link.invite_link}</code>",parse_mode='html')
+                await message.answer(f"Вот ваша персональная ссылка :\n👉<code>{link.invite_link}</code>\n\n{your_link_text}\n{link.invite_link}\n\nОтличный канал с оперативными новостями нашего региона.",parse_mode='html')
                 db.add_inv_url(message.from_user.id,str(link.invite_link))
                 db.edit_try_free(message.from_user.id)
             else:
@@ -131,7 +131,7 @@ async def echo(message: Message, state: FSMContext):
             await message.answer(f"Вы пригласили: {db.get_balance(message.from_user.id)}\nБаланс: {db.get_money(message.from_user.id)} рублей")
         if msg == '📝 Правила':
             await message.answer(rules)
-        if msg == '💵 Выввод денег':
+        if msg == '💵 Вывод денег':
             if db.get_money(message.from_user.id)>=400:
                 await message.answer("Пришлите данные вашей карты для вывода средств",reply_markup=mk.cancel_button)
                 await state.set_state(finance.finance1)
